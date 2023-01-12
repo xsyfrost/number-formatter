@@ -43,7 +43,7 @@ class NumberFormatter extends \NumberFormatter
     /**
      * @inheritdoc
      */
-    public function setTextAttribute($attr, $value)
+    public function setTextAttribute($attr, $value): bool
     {
         if ($this->isExtendedSpelloutAvailable($attr, $value)) {
             $this->attributes[$attr] = $value;
@@ -61,7 +61,7 @@ class NumberFormatter extends \NumberFormatter
      * @param string $value
      * @return bool
      */
-    public function isExtendedSpelloutAvailable($attr, $value)
+    public function isExtendedSpelloutAvailable($attr, $value):bool
     {
         if ($this->isSpelloutRuleset($attr)) {
             $namespace = $this->getSpelloutNamespace($value);
@@ -73,13 +73,13 @@ class NumberFormatter extends \NumberFormatter
         return false;
     }
 
-    private function isSpelloutRuleset($attr)
+    private function isSpelloutRuleset($attr):bool
     {
         $ruleset = $attr === NumberFormatter::DEFAULT_RULESET || $attr === NumberFormatter::PUBLIC_RULESETS;
         return $this->isSpellout && $ruleset;
     }
 
-    private function getSpelloutNamespace($value)
+    private function getSpelloutNamespace($value):string
     {
         $string = substr($value, 1);
         $namespace = '\\Arius\\Lang\\'.ucfirst($this->getLocale()).'\\';
@@ -91,7 +91,7 @@ class NumberFormatter extends \NumberFormatter
         return $namespace;
     }
 
-    private function initializeSpelloutExtender($namespace)
+    private function initializeSpelloutExtender($namespace):bool
     {
         $reflectionClass = new \ReflectionClass($namespace);
 
@@ -106,7 +106,7 @@ class NumberFormatter extends \NumberFormatter
     /**
      * @inheritdoc
      */
-    public function getTextAttribute($attr)
+    public function getTextAttribute($attr): string|false
     {
         return isset($this->attributes[$attr]) ? $this->attributes[$attr] : parent::getTextAttribute($attr);
     }
@@ -114,7 +114,7 @@ class NumberFormatter extends \NumberFormatter
     /**
      * @inheritdoc
      */
-    public function format($value, $type = null)
+    public function format($value, $type = \NumberFormatter::TYPE_DEFAULT): string|false
     {
         if ($this->isSpellout && $this->spelloutExtender instanceof SpelloutInterface) {
             return $this->extendedFormat($value);
@@ -127,7 +127,7 @@ class NumberFormatter extends \NumberFormatter
      * @param int $value
      * @return string
      */
-    private function extendedFormat($value)
+    private function extendedFormat($value):string
     {
         return $this->spelloutExtender->format($value);
     }
